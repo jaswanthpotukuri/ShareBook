@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Books - ShareBook</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: #4CAF50;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 80%;
+            margin: auto;
+        }
+        .search-container {
+            margin-bottom: 20px;
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: black;
+        }
+        .book-list {
+            margin-top: 20px;
+        }
+        .book {
+            background: white;
+            padding: 15px;
+            margin: 10px auto;
+            width: 60%;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .request-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .request-btn:hover {
+            background: #0056b3;
+        }
+        .back-btn {
+            margin-top: 20px;
+            background: #333;
+        }
+        .back-btn:hover {
+            background: #111;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Browse Books</h2>
+        
+        <div class="search-container">
+            <input type="text" id="searchBox" placeholder="Search for books...">
+            <select id="categoryFilter">
+                <option value="all">All Categories</option>
+                <option value="fiction">Fiction</option>
+                <option value="non-fiction">Non-fiction</option>
+                <option value="science">Science</option>
+                <option value="history">History</option>
+            </select>
+            <button onclick="showBooks()">Search</button>
+        </div>
+        
+        <div class="book-list" id="bookList"></div>
+
+        <button class="back-btn" onclick="location.href='home.html'">Back to Home</button>
+    </div>
+    
+    <script>
+        let allBooks = []; // Store all books fetched from the backend
+
+        // Fetch all books from the backend
+        function fetchBooks() {
+            fetch('http://localhost:3000/books')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch books');
+                    }
+                    return response.json();
+                })
+                .then(books => {
+                    // Map backend fields to frontend expectations
+                    allBooks = books.map(book => ({
+                        title: book.bookname,
+                        author: book.book_author,
+                        category: book.category
+                    }));
+                    showBooks(); // Display books after fetching
+                })
+                .catch(error => {
+                    console.error('Error fetching books:', error);
+                    document.getElementById('bookList').innerHTML = '<p>❌ Failed to load books.</p>';
+                });
+        }
+
+        // Display and filter books based on search and category
+        function showBooks() {
+            const searchQuery = document.getElementById('searchBox').value.toLowerCase().trim();
+            const category = document.getElementById('categoryFilter').value.toLowerCase();
+            const bookList = document.getElementById('bookList');
+            bookList.innerHTML = ''; // Clear previous books
+
+            // Filter books
+            const filteredBooks = allBooks.filter(book => {
+                const matchesSearch = book.title.toLowerCase().includes(searchQuery) || 
+                                     book.author.toLowerCase().includes(searchQuery);
+                const matchesCategory = category === 'all' || book.category.toLowerCase() === category;
+                return matchesSearch && matchesCategory;
+            });
+
+            // Display filtered books
+            if (filteredBooks.length === 0) {
+                bookList.innerHTML = '<p>No books found.</p>';
+            } else {
+                filteredBooks.forEach(book => {
+                    const bookDiv = document.createElement('div');
+                    bookDiv.classList.add('book');
+                    bookDiv.innerHTML = `
+                        <h3>${book.title}</h3>
+                        <p>Author: ${book.author}</p>
+                        <p>Category: ${book.category}</p>
+                        <button class="request-btn" onclick="requestBook('${book.title}', '${book.author}')">Request for Rent</button>
+                    `;
+                    bookList.appendChild(bookDiv);
+                });
+            }
+
+            bookList.style.display = 'block'; // Ensure book list is visible
+        }
+
+        // Handle book rental request
+        function requestBook(title, author) {
+            window.location.href = `rental_checkout.html?title=${encodeURIComponent(title)}&author=${encodeURIComponent(author)}`;
+        }
+
+        // Fetch books when the page loads
+        document.addEventListener('DOMContentLoaded', fetchBooks);
+    </script>
+</body>
+</html>

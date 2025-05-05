@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Book - ShareBook</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 15px 20px;
+      text-align: center;
+    }
+
+    main {
+      max-width: 500px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    .message {
+      margin-top: 20px;
+      text-align: center;
+      color: green;
+      font-weight: bold;
+    }
+
+    .back-home {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .back-home a {
+      text-decoration: none;
+      color: #4CAF50;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Add Book</h1>
+  </header>
+
+  <main>
+    <h2>Enter Book Details</h2>
+    <form id="addBookForm">
+      <label for="bookName">Book Name:</label>
+      <input type="text" id="bookName" name="bookName" required />
+
+      <label for="authorName">Author Name:</label>
+      <input type="text" id="authorName" name="authorName" required />
+
+      <button type="submit">Add</button>
+    </form>
+
+    <div class="message" id="message"></div>
+
+    <div class="back-home" id="backHome" style="display: none;">
+      <a href="index.html">← Back to Home</a>
+    </div>
+  </main>
+
+  <script>
+    const form = document.getElementById('addBookForm');
+    const message = document.getElementById('message');
+    const backHome = document.getElementById('backHome');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault();
+
+      const bookName = document.getElementById('bookName').value;
+      const authorName = document.getElementById('authorName').value;
+
+      // Placeholder for backend saving logic
+      // You can send this data to a backend via AJAX or store in localStorage if needed
+
+      message.textContent = `Book "${bookName}" by ${authorName} added successfully!`;
+      form.reset();
+      backHome.style.display = 'block';
+    });
+  </script>
+</body>
+</html>

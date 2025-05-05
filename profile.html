@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Update</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 50%;
+            margin: auto;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Update Your Profile</h2>
+        <form id="profileForm">
+            <input type="text" id="name" placeholder="Full Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="text" id="phone" placeholder="Phone Number" required>
+            <input type="text" id="address" placeholder="Address" required>
+            <button type="button" onclick="saveProfile()">Save Changes</button>
+        </form>
+    </div>
+    
+    <script>
+        // Load existing profile details from local storage
+        window.onload = function() {
+            document.getElementById("name").value = localStorage.getItem("name") || "";
+            document.getElementById("email").value = localStorage.getItem("email") || "";
+            document.getElementById("phone").value = localStorage.getItem("phone") || "";
+            document.getElementById("address").value = localStorage.getItem("address") || "";
+        };
+        
+        function saveProfile() {
+            localStorage.setItem("name", document.getElementById("name").value);
+            localStorage.setItem("email", document.getElementById("email").value);
+            localStorage.setItem("phone", document.getElementById("phone").value);
+            localStorage.setItem("address", document.getElementById("address").value);
+            alert("Profile updated successfully!");
+        }
+    </script>
+</body>
+</html>

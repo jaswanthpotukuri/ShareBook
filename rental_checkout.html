@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rental Checkout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+        .book-details {
+            margin-bottom: 15px;
+        }
+        .price {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #28a745;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Rental Checkout</h2>
+        <div class="book-details">
+            <h3 id="book-title">Book Title</h3>
+            <p id="book-author">Author: Unknown</p>
+            <p class="price">Price: ₹<span id="book-price"></span></p>
+        </div>
+        <button onclick="confirmRental()">Confirm Rental</button>
+    </div>
+
+    <script>
+        // Get book details from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const bookTitle = urlParams.get('title');
+        const bookAuthor = urlParams.get('author');
+        const price = Math.floor(Math.random() * 11) + 10; // ₹10–20 random price
+
+        // Populate HTML
+        if (bookTitle && bookAuthor) {
+            document.getElementById('book-title').textContent = bookTitle;
+            document.getElementById('book-author').textContent = `Author: ${bookAuthor}`;
+            document.getElementById('book-price').textContent = price;
+        }
+
+        // Confirm rental and send request to backend
+        async function confirmRental() {
+            try {
+                // Fetch book_id from the book table
+                const response = await fetch(`http://localhost:3000/books`);
+                const books = await response.json();
+                const book = books.find(b => b.bookname === bookTitle && b.book_author === bookAuthor);
+
+                if (!book) {
+                    alert('❌ Book not found in database.');
+                    return;
+                }
+
+                // Hardcoded user_id for demo (replace with actual user ID in production)
+                const userId = 1;
+                const requestDate = new Date().toISOString().split('T')[0]; // Current date in YYYY-MM-DD
+
+                // Send request to /request-book API
+                const requestResponse = await fetch('http://localhost:3000/request-book', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        book_id: book.id,
+                        request_date: requestDate,
+                        status: 'Pending'
+                    }),
+                });
+
+                const result = await requestResponse.json();
+                if (requestResponse.ok) {
+                    alert('✅ Book request submitted successfully!');
+                    window.location.href = 'my-book.html';
+                } else {
+                    alert(`❌ Failed to request book: ${result.error}`);
+                }
+            } catch (err) {
+                alert('❌ Error submitting request.');
+                console.error('Error:', err);
+            }
+        }
+    </script>
+</body>
+</html>
